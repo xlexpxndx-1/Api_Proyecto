@@ -29,20 +29,21 @@ export const obtenerServicioPorId = async (req, res) => {
 // Crear nuevo servicio
 export const crearServicio = async (req, res) => {
   try {
-    const { nombre_servicio, tipo_servicio, descripcion } = req.body
+    const { nombre_servicio, tipo_servicio, descripcion, costo } = req.body
 
-    if (!nombre_servicio || !tipo_servicio) {
+    if (!nombre_servicio || !tipo_servicio || costo == null) {
       return res.status(400).json({ message: 'Faltan campos obligatorios' })
     }
 
     const [result] = await pool.query(
-      `INSERT INTO Servicios (nombre_servicio, tipo_servicio, descripcion)
-       VALUES (?, ?, ?)`,
-      [nombre_servicio, tipo_servicio, descripcion]
+      `INSERT INTO Servicios (nombre_servicio, tipo_servicio, descripcion, costo)
+       VALUES (?, ?, ?, ?)`,
+      [nombre_servicio, tipo_servicio, descripcion, costo]
     )
 
     res.status(201).json({ message: 'Servicio creado', id_servicio: result.insertId })
   } catch (error) {
+    console.error(error)
     res.status(500).json({ error: 'Error al crear el servicio' })
   }
 }
@@ -51,12 +52,13 @@ export const crearServicio = async (req, res) => {
 export const actualizarServicio = async (req, res) => {
   try {
     const { id } = req.params
-    const { nombre_servicio, tipo_servicio, descripcion } = req.body
+    const { nombre_servicio, tipo_servicio, descripcion, costo } = req.body
 
     const [result] = await pool.query(
-      `UPDATE Servicios SET nombre_servicio = ?, tipo_servicio = ?, descripcion = ? 
+      `UPDATE Servicios 
+       SET nombre_servicio = ?, tipo_servicio = ?, descripcion = ?, costo = ? 
        WHERE id_servicio = ?`,
-      [nombre_servicio, tipo_servicio, descripcion, id]
+      [nombre_servicio, tipo_servicio, descripcion, costo, id]
     )
 
     if (result.affectedRows === 0) {
@@ -65,6 +67,7 @@ export const actualizarServicio = async (req, res) => {
 
     res.json({ message: 'Servicio actualizado correctamente' })
   } catch (error) {
+    console.error(error)
     res.status(500).json({ error: 'Error al actualizar el servicio' })
   }
 }
