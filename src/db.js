@@ -12,5 +12,8 @@ export const pool = createPool({
   database: BD_DATABASE,
   user: BD_USER,
   password: BD_PASSWORD,
-  port: BD_PORT
+  port: BD_PORT,
+  waitForConnections: true,
+  connectionLimit: 10, // Puedes ajustar esto según la carga esperada
+  queueLimit: 0
 });
